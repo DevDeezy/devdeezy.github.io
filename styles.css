@@ -540,6 +540,7 @@ html {
     display: flex;
     align-items: center;
     gap: 8px;
+    max-width: calc(100vw - 40px);
 }
 
 .chat-label-close {
@@ -609,4 +610,27 @@ textarea {
 .chat-widget-icon path,
 .chat-widget-icon circle {
     cursor: pointer !important;
+}
+
+@media (max-width: 480px) {
+    .chat-label {
+        white-space: normal;
+        right: 0;
+        width: auto;
+        max-width: 250px;
+    }
+    .chat-label span {
+        flex: 1;
+    }
+    .chat-container {
+        width: calc(100vw - 40px);
+        padding: 0;
+    }
+    .chat-header,
+    .chat-input-container {
+        padding: 15px 20px;
+    }
+    .chat-messages {
+        padding: 15px 20px;
+    }
 }
