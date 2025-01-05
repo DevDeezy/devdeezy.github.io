@@ -1,5 +1,6 @@
 class ChatWidget {
   constructor() {
+    this.chatLabel = document.querySelector(".chat-label");
     this.chatButton = document.querySelector(".chat-widget-button");
     this.chatContainer = document.querySelector(".chat-container");
     this.closeButton = document.querySelector(".close-chat");
@@ -7,6 +8,7 @@ class ChatWidget {
     this.chatInput = document.querySelector(".chat-input");
     this.chatMessages = document.querySelector(".chat-messages");
     this.clearButton = document.querySelector(".clear-chat");
+    this.labelCloseButton = document.querySelector(".chat-label-close");
 
     // Initialize the chat as closed
     this.chatContainer.classList.remove("active");
@@ -16,6 +18,11 @@ class ChatWidget {
 
     // Load saved messages
     this.loadMessages();
+
+    // Set timeout to hide label after 5 seconds
+    setTimeout(() => {
+      this.hideLabel();
+    }, 5000);
   }
 
   setupEventListeners() {
@@ -28,9 +35,13 @@ class ChatWidget {
       }
     });
     this.clearButton?.addEventListener("click", () => this.clearHistory());
+    this.labelCloseButton?.addEventListener("click", () => this.hideLabel());
   }
 
   toggleChat() {
+    // Hide label when opening chat
+    this.hideLabel();
+
     // Toggle the active class
     this.chatContainer.classList.toggle("active");
 
@@ -51,13 +62,16 @@ class ChatWidget {
     const loadingMessage = this.addLoadingMessage();
 
     try {
-      const response = await fetch("https://scintillating-cupcake-093ebf.netlify.app/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: userMessage }),
-      });
+      const response = await fetch(
+        "https://scintillating-cupcake-093ebf.netlify.app/api/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: userMessage }),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to get response");
 
@@ -77,15 +91,39 @@ class ChatWidget {
     }
   }
 
-  addMessage(message, type) {
+  async addMessage(message, type) {
     const messageElement = document.createElement("div");
     messageElement.classList.add("chat-message", `${type}-message`);
-    messageElement.textContent = message;
-    this.chatMessages.appendChild(messageElement);
-    this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
 
-    // Save message to localStorage
+    // If it's a user message, add it immediately
+    if (type === "user") {
+      messageElement.textContent = message;
+      this.chatMessages.appendChild(messageElement);
+      this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+      this.saveMessage(message, type);
+      return;
+    }
+
+    // For bot messages, add typewriter effect
+    this.chatMessages.appendChild(messageElement);
+    await this.typeWriter(messageElement, message);
     this.saveMessage(message, type);
+  }
+
+  typeWriter(element, text, speed = 30) {
+    return new Promise((resolve) => {
+      let i = 0;
+      const timer = setInterval(() => {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        } else {
+          clearInterval(timer);
+          resolve();
+        }
+      }, speed);
+    });
   }
 
   addLoadingMessage() {
@@ -136,6 +174,15 @@ class ChatWidget {
   clearHistory() {
     localStorage.removeItem("chatMessages");
     this.chatMessages.innerHTML = "";
+  }
+
+  hideLabel() {
+    if (this.chatLabel) {
+      this.chatLabel.style.opacity = "0";
+      setTimeout(() => {
+        this.chatLabel.style.display = "none";
+      }, 300); // Wait for fade out animation
+    }
   }
 }
 

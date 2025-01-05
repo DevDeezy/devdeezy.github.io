@@ -30,6 +30,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    cursor: default;
 }
 
 body {
@@ -521,4 +522,91 @@ html {
 .theme-toggle:hover {
     background: var(--accent-dark);
     transform: translateY(-2px);
+}
+
+.chat-label {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background: var(--accent-color);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease-out;
+    transition: opacity 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-label-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0 4px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.chat-label-close:hover {
+    opacity: 1;
+}
+
+.chat-label::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 24px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--accent-color);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+a,
+button,
+.chat-widget-button,
+.send-message,
+.chat-input,
+.theme-toggle,
+.clear-chat,
+.close-chat {
+    cursor: pointer !important;
+}
+
+
+/* Optional: Add this if you want text selection cursor on inputs */
+
+input,
+textarea {
+    cursor: text !important;
+}
+
+
+/* Add or update these styles */
+
+.chat-widget,
+.chat-widget-button,
+.chat-widget-icon,
+.chat-widget-icon svg,
+.chat-widget-icon path,
+.chat-widget-icon circle {
+    cursor: pointer !important;
 }
