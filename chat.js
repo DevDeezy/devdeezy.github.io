@@ -51,7 +51,7 @@ class ChatWidget {
     const loadingMessage = this.addLoadingMessage();
 
     try {
-      const response = await fetch("http://localhost:3000/api/chat", {
+      const response = await fetch("https://scintillating-cupcake-093ebf.netlify.app/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
