@@ -634,3 +634,17 @@ textarea {
         padding: 15px 20px;
     }
 }
+
+.chat-message.suggestion {
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-color);
+    color: var(--text-primary);
+    cursor: pointer !important;
+    transition: all 0.2s ease;
+}
+
+.chat-message.suggestion:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: translateX(5px);
+}

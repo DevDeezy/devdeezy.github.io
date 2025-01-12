@@ -16,8 +16,13 @@ class ChatWidget {
     this.setupEventListeners();
     this.isProcessing = false;
 
-    // Load saved messages
-    this.loadMessages();
+    // Load saved messages or show welcome message if empty
+    const savedMessages = this.getSavedMessages();
+    if (savedMessages.length === 0) {
+      this.showWelcomeMessage();
+    } else {
+      this.loadMessages();
+    }
 
     // Set timeout to hide label after 5 seconds
     setTimeout(() => {
@@ -170,7 +175,6 @@ class ChatWidget {
     }
   }
 
-  // Optional: Add method to clear chat history
   clearHistory() {
     localStorage.removeItem("chatMessages");
     this.chatMessages.innerHTML = "";
@@ -181,17 +185,47 @@ class ChatWidget {
       this.chatLabel.style.opacity = "0";
       setTimeout(() => {
         this.chatLabel.style.display = "none";
-      }, 300); // Wait for fade out animation
+      }, 300);
     }
+  }
+
+  showWelcomeMessage() {
+    const welcomeMessage =
+      "👋 Hi! I'm an AI assistant. I can help you learn more about Diogo. Here are some questions you can ask:";
+    const suggestions = [
+      "What are Diogo's main skills?",
+      "Tell me about his work experience",
+      "What technologies does he use?",
+    ];
+
+    this.addMessage(welcomeMessage, "bot");
+
+    setTimeout(() => {
+      suggestions.forEach((suggestion, index) => {
+        setTimeout(() => {
+          const messageElement = document.createElement("div");
+          messageElement.classList.add(
+            "chat-message",
+            "bot-message",
+            "suggestion"
+          );
+          messageElement.textContent = suggestion;
+          messageElement.addEventListener("click", () => {
+            this.chatInput.value = suggestion;
+            this.sendMessage();
+          });
+          this.chatMessages.appendChild(messageElement);
+          this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }, index * 200);
+      });
+    }, 500);
   }
 }
 
-// Initialize the chat widget
 document.addEventListener("DOMContentLoaded", () => {
   new ChatWidget();
 });
 
-// Add theme toggle functionality
 function toggleTheme() {
   const body = document.body;
   const button = document.querySelector(".theme-toggle");
