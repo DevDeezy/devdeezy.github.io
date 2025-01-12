@@ -112,7 +112,10 @@ class ChatWidget {
     // For bot messages, add typewriter effect
     this.chatMessages.appendChild(messageElement);
     await this.typeWriter(messageElement, message);
-    this.saveMessage(message, type);
+    // Only save bot messages that aren't welcome messages
+    if (!message.includes("Hi! I'm an AI assistant")) {
+      this.saveMessage(message, type);
+    }
   }
 
   typeWriter(element, text, speed = 30) {
@@ -164,6 +167,11 @@ class ChatWidget {
 
   loadMessages() {
     const messages = this.getSavedMessages();
+    if (messages.length === 0) {
+      this.showWelcomeMessage();
+      return;
+    }
+
     messages.forEach(({ message, type }) => {
       const messageElement = document.createElement("div");
       messageElement.classList.add("chat-message", `${type}-message`);
@@ -178,6 +186,7 @@ class ChatWidget {
   clearHistory() {
     localStorage.removeItem("chatMessages");
     this.chatMessages.innerHTML = "";
+    this.showWelcomeMessage();
   }
 
   hideLabel() {
@@ -198,7 +207,11 @@ class ChatWidget {
       "What technologies does he use?",
     ];
 
-    this.addMessage(welcomeMessage, "bot");
+    // Don't save welcome message to localStorage
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("chat-message", "bot-message");
+    messageElement.textContent = welcomeMessage;
+    this.chatMessages.appendChild(messageElement);
 
     setTimeout(() => {
       suggestions.forEach((suggestion, index) => {
